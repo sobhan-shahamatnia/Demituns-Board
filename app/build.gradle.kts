@@ -15,6 +15,8 @@
  */
 
 import java.io.ByteArrayOutputStream
+import java.io.FileInputStream
+import java.util.Properties
 import org.jetbrains.kotlin.compose.compiler.gradle.ComposeFeatureFlag
 
 plugins {
@@ -25,6 +27,13 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.mannodermaus.android.junit5)
     alias(libs.plugins.mikepenz.aboutlibraries)
+}
+
+val secretsFile = rootProject.file("secrets.properties")
+val secrets = Properties().apply {
+    if (secretsFile.exists()) {
+        load(FileInputStream(secretsFile))
+    }
 }
 
 val projectMinSdk: String by project
@@ -62,11 +71,14 @@ android {
         versionCode = projectVersionCode.toInt()
         versionName = projectVersionName.substringBefore("-")
 
+        buildConfigField("String", "OPENAI_API_KEY", "\"${secrets.getProperty("OPENAI_API_KEY", "")}\"")
+
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         buildConfigField("String", "BUILD_COMMIT_HASH", "\"${getGitCommitHash()}\"")
         buildConfigField("String", "FLADDONS_API_VERSION", "\"v~draft2\"")
         buildConfigField("String", "FLADDONS_STORE_URL", "\"beta.addons.florisboard.org\"")
+
 
         ksp {
             arg("room.schemaLocation", "$projectDir/schemas")
@@ -111,7 +123,7 @@ android {
             resValue("mipmap", "floris_app_icon", "@mipmap/ic_app_icon_debug")
             resValue("mipmap", "floris_app_icon_round", "@mipmap/ic_app_icon_debug_round")
             resValue("drawable", "floris_app_icon_foreground", "@drawable/ic_app_icon_debug_foreground")
-            resValue("string", "floris_app_name", "FlorisBoard Debug")
+            resValue("string", "floris_app_name", "Demituns Board")
         }
 
         create("beta") {
@@ -173,6 +185,7 @@ tasks.withType<Test> {
 }
 
 dependencies {
+    implementation("com.squareup.okhttp3:okhttp:4.10.0")
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.activity.ktx)
     implementation(libs.androidx.autofill)
@@ -189,6 +202,8 @@ dependencies {
     implementation(libs.androidx.material.icons)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.profileinstaller)
+    implementation(libs.androidx.media3.exoplayer)
+    implementation(libs.common)
     ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.room.runtime)
     implementation(libs.cache4k)

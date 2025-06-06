@@ -25,6 +25,7 @@ import android.view.KeyCharacterMap
 import android.view.KeyEvent
 import android.view.inputmethod.InputConnection
 import dev.patrickgold.florisboard.FlorisImeService
+import dev.patrickgold.florisboard.ime.demituns.TextCaptureManager
 import dev.patrickgold.florisboard.ime.nlp.BreakIteratorGroup
 import dev.patrickgold.florisboard.ime.text.composing.Composer
 import dev.patrickgold.florisboard.keyboardManager
@@ -86,6 +87,18 @@ abstract class AbstractEditorInstance(context: Context) {
     private val _lastCommitPosition = LastCommitPosition()
     val lastCommitPosition
         get() = LastCommitPosition(_lastCommitPosition)
+
+    //this func is for demituns
+    init {
+
+        // Observe live text changes and update our capture
+        scope.launch {
+            activeContentFlow.collect { content ->
+                // This updates the full text as it changes, whether characters are added or removed.
+                TextCaptureManager.updateCapturedText(content.text)
+            }
+        }
+    }
 
     fun expectedContent(): EditorContent? {
         return runBlocking { expectedContentQueue.peekNewestOrNull() }

@@ -23,6 +23,7 @@ import android.content.res.Configuration
 import android.inputmethodservice.ExtractEditText
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.util.Size
 import android.util.TypedValue
 import android.view.Gravity
@@ -82,6 +83,7 @@ import dev.patrickgold.florisboard.ime.ImeUiMode
 import dev.patrickgold.florisboard.ime.clipboard.ClipboardInputLayout
 import dev.patrickgold.florisboard.ime.core.SelectSubtypePanel
 import dev.patrickgold.florisboard.ime.core.isSubtypeSelectionShowing
+import dev.patrickgold.florisboard.ime.demituns.DeKeyboardPopup
 import dev.patrickgold.florisboard.ime.editor.EditorRange
 import dev.patrickgold.florisboard.ime.editor.FlorisEditorInfo
 import dev.patrickgold.florisboard.ime.input.InputFeedbackController
@@ -144,6 +146,14 @@ private var FlorisImeServiceReference = WeakReference<FlorisImeService?>(null)
  * Core class responsible for linking together all managers and UI compose-ables to provide an IME service. Sets
  * up the window and context to be lifecycle-aware, so LiveData and Jetpack Compose can be used without issues.
  */
+
+//create by demituns
+object GlobalKeyboardSize {
+    var keyboardWidth = 0
+    var keyboardheight = 0
+}
+
+
 class FlorisImeService : LifecycleInputMethodService() {
     companion object {
         private val InlineSuggestionUiSmallestSize = Size(0, 0)
@@ -566,7 +576,18 @@ class FlorisImeService : LifecycleInputMethodService() {
                                     DevtoolsOverlay(modifier = Modifier.fillMaxSize())
                                 }
                             }
-                            ImeUi()
+                            //this box created by demituns to get actual keyboard size - height and width
+                            Box(
+                                modifier = Modifier
+                                    .wrapContentHeight()
+                                    .onGloballyPositioned { coords ->
+                                        GlobalKeyboardSize.keyboardWidth = coords.size.width
+                                        GlobalKeyboardSize.keyboardheight = coords.size.height
+                                        Log.d("DemitDebug2", "IME window: ${coords.size.width} x ${coords.size.height} px")
+                                    }
+                            ) {
+                                ImeUi()
+                            }
                         }
                         SystemUiIme()
                     }
@@ -663,6 +684,12 @@ class FlorisImeService : LifecycleInputMethodService() {
 
         @Composable
         override fun Content() {
+            //create by demituns
+            if (GlobalOverlayState.showOverlay) {
+                DeKeyboardPopup(
+                    onDismiss = { GlobalOverlayState.showOverlay = false }
+                )
+            }
             ImeUiWrapper()
         }
 

@@ -16,6 +16,8 @@
 
 package dev.patrickgold.florisboard.ime.smartbar.quickaction
 
+import DemitunsButton
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Row
@@ -27,17 +29,27 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.dp
 import dev.patrickgold.florisboard.app.florisPreferenceModel
 import dev.patrickgold.florisboard.ime.smartbar.SmartbarLayout
+import dev.patrickgold.florisboard.ime.text.key.KeyCode
 import dev.patrickgold.florisboard.ime.text.keyboard.TextKeyData
 import dev.patrickgold.florisboard.ime.theme.FlorisImeTheme
 import dev.patrickgold.florisboard.keyboardManager
 import org.florisboard.lib.snygg.ui.snyggBackground
 import dev.patrickgold.jetpref.datastore.model.observeAsState
+import org.florisboard.lib.snygg.ui.solidColor
 
 internal val ToggleOverflowPanelAction = QuickAction.InsertKey(TextKeyData.TOGGLE_ACTIONS_OVERFLOW)
+
+
+//created by Demituns to get keyboard smartbar height
+object GlobalSmartBarSize {
+    var SmartBarHeight = 0.dp
+}
 
 @Composable
 fun QuickActionsRow(
@@ -76,6 +88,9 @@ fun QuickActionsRow(
         val visibleActions = dynamicActions
             .subList(0, numActionsToShow.coerceAtMost(dynamicActions.size))
 
+        //this by demituns
+        GlobalSmartBarSize.SmartBarHeight = height
+
         SideEffect {
             keyboardManager.smartbarVisibleDynamicActionsCount =
                 if (smartbarLayout == SmartbarLayout.ACTIONS_ONLY && actionArrangement.stickyAction != null) {
@@ -92,6 +107,20 @@ fun QuickActionsRow(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceEvenly,
         ) {
+
+            // Demituns button
+            var fgColor: Color = Color.Black // Default color
+            for (action in visibleActions) {
+                val actionStyle = FlorisImeTheme.style.get(action.keyData().code.toString())
+                fgColor = when (action.keyData().code) {
+                    KeyCode.DRAG_MARKER -> Color.Red
+                    else -> actionStyle.foreground.solidColor(context, default = FlorisImeTheme.fallbackContentColor())
+                }
+
+            }
+            //create by demituns
+            DemitunsButton(onClick = { Log.d("DemitunsButton", "Demituns button clicked!") }, fgColor = fgColor)
+
             if (showOverflowAction && flipToggles) {
                 QuickActionButton(ToggleOverflowPanelAction, evaluator)
             }
