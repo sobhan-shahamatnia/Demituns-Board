@@ -6,9 +6,9 @@
 <img src="https://github.com/sobhan-shahamatnia/Demituns-Board/blob/main/docs/1.png" alt="OpenAI Translation" width="300" />
 
 ### 2. Customizable Target Language  
-![Target Language Selection](docs/feature_language_selection.png)
+<img src="https://github.com/sobhan-shahamatnia/Demituns-Board/blob/main/docs/2.png" alt="OpenAI Translation" width="300" />
 
 ### 3. Customizable Conversational Tone  
-![Tone Customization](docs/feature_tone_customization.png)
+<img src="https://github.com/sobhan-shahamatnia/Demituns-Board/blob/main/docs/3.png" alt="OpenAI Translation" width="300" />
 
 
