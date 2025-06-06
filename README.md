@@ -3,7 +3,7 @@
 ## ✨ Features
 
 ### 1. OpenAI-Powered Translation  
-![OpenAI Translation](https://github.com/sobhan-shahamatnia/Demituns-Board/blob/main/docs/1.png)
+<img src="https://github.com/sobhan-shahamatnia/Demituns-Board/blob/main/docs/1.png" alt="OpenAI Translation" width="300" />
 
 ### 2. Customizable Target Language  
 ![Target Language Selection](docs/feature_language_selection.png)
